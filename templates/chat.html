@@ -1,0 +1,277 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Follow & Chat with your friends</title>
+</head>
+
+<body>
+{% block content %}
+    <section class="msger">
+        <header class="msger-header">
+          <a href="{% url 'index' %}" style="text-decoration: none;">
+          <div class="msger-header-title" style="background: linear-gradient(135deg, #71b7e6, #9b59b6); color:white; border-radius:21px; font-size:15px; padding:10px">
+             @{{friend.username}}
+          </div>
+          </a>
+          <div class="msger-header-options">
+            <span><i class="fas fa-cog"></i></span>
+          </div>
+        </header>
+      
+        <main class="msger-chat" id="chats">
+
+          {% for chat in chats %}
+
+          {% if chat.msg_sender == friend and chat.msg_receiver == user %}
+
+          <div class="msg left-msg" id="rec-msg">
+            <a href="{{ friend.profile_picture.url }}">
+            <div
+             class="msg-img"
+             style="background-image: url({{ friend.profile_picture.url }})"
+            ></div>
+            </a>
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name">{{friend.first_name}}</div>
+                <div class="msg-info-time">{{chat.created.time}}</div>
+              </div>
+      
+              <div class="msg-text" style="font-size: 15px;">
+                {{chat}}
+              </div>
+            </div>
+          </div>
+
+          {% elif chat.msg_sender == user and chat.msg_receiver == friend %}
+      
+          <div class="msg right-msg" id="right-msg">
+            <a href="{{user.profile_picture.url}}">
+            <div
+             class="msg-img"
+             style="background-image: url({{user.profile_picture.url}})"
+            ></div>
+            </a>
+      
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name">You</div>
+                <div class="msg-info-time">{{chat.created.time}}</div>
+              </div>
+      
+              <div class="msg-text" style="font-size: 15px;">
+                {{chat}}
+              </div>
+            </div>
+          </div>
+
+          {% endif %}
+
+          {% endfor %}
+
+        </main>
+      
+        <form method="post" class="msger-inputarea" id="myform">
+          {% csrf_token %}
+          {{form.body}}
+          <button type="submit" class="msger-send-btn" id="myform">Send</button>
+      </form>
+      
+      </section>
+      {% endblock %}
+
+      <!-- <script src="{% static 'js/chat.js' %}"></script> -->
+    
+</body>
+
+<script src="{% static 'js/base.js' %}"></script>
+
+<script>
+  // Make sure this JavaScript code is inside the appropriate block
+  // where 'friend' and 'user' variables are available.
+  
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+//const csrftoken = getCookie('csrftoken');
+
+let form = document.getElementById('myform');
+form.addEventListener('submit', sendChat)
+
+  function sendChat(e) {
+    e.preventDefault();
+      let chatMessage = document.getElementById('id_body').value;
+      console.log(chatMessage);
+  
+      async function postJSON(data) {
+          try {
+              const response = await fetch(url, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": csrftoken
+                  },
+                  body: JSON.stringify(data),
+              });
+  
+              const result = await response.json();
+              console.log("Success:", result);
+  
+              // Append the chat message to the chat history
+              let chat_body = document.getElementById('chats');
+              let ChatMessageBox = document.createElement("div");
+              ChatMessageBox.classList.add("msg");
+              ChatMessageBox.classList.add("right-msg");
+              ChatMessageBox.innerHTML = `
+                <a href="{{user.profile_picture.url}}">
+                  <div
+                    class="msg-img"
+                    style="background-image: url({{user.profile_picture.url}})"
+                  ></div>
+                </a>
+                <div class="msg-bubble">
+                  <div class="msg-info">
+                    <div class="msg-info-name">You</div>
+                    <div class="msg-info-time" id="chat-created-time"></div>
+                  </div>
+                  <div class="msg-text" style="font-size: 15px;">
+                    ${data.msg}
+                  </div>
+                </div>
+              `;
+
+              chat_body.appendChild(ChatMessageBox);
+              // Clear the text input field after sending the message
+              document.getElementById('id_body').value = '';
+  
+          } catch (error) {
+              console.error("Error:", error);
+          }
+      }
+  
+      const data = { msg: chatMessage };
+      let url = "{% url 'sent_message' friend.id %}"; // Define the URL to your view
+      postJSON(data);
+  }
+
+  </script>
+
+<script>
+    // Define JavaScript variables with the data you need
+    const num = {% if num %}{{ num }}{% else %}0{% endif %}; // Use 0 if 'num' is not defined
+    const friendProfilePictureUrl = "{{ friend.profile_picture.url }}";
+    const friendFirstName = "{{ friend.first_name }}";
+    const chatCreatedTime = "{{ chat.created.time }}";
+</script>
+
+<script>
+
+  function scrollToBottom() {
+    // Replace 'chats' with the ID or selector of your chat container element
+    const chatContainer = document.getElementById('chats');
+    const lastChild = chatContainer.lastChild;
+
+    if (lastChild) {
+        lastChild.id = 'last-child';
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+}
+
+    let lastMessageId = null;
+    let counter = num; // Use the JavaScript variable
+
+    function receiveMessage() {
+        async function postJSON(data) {
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrftoken
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json(); // Define 'result' here
+
+                console.log("Success:", result);
+
+                if (result.length == 0) {
+                    // No new messages
+                } else {
+                    let lastMsg = result[result.length - 1];
+
+                    if (counter == result.length) {
+                        console.log("There are no new messages");
+                    } else {
+                        // Append the chat message to the chat history
+                        let chat_body = document.getElementById('chats');
+                        let ChatMessageBox = document.createElement("div");
+                        ChatMessageBox.classList.add("msg");
+                        ChatMessageBox.classList.add("left-msg");
+                        ChatMessageBox.innerHTML = `
+                            <a href="${friendProfilePictureUrl}">
+                                <div
+                                    class="msg-img"
+                                    style="background-image: url(${friendProfilePictureUrl})"
+                                ></div>
+                            </a>
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                    <div class="msg-info-name">${friendFirstName}</div>
+                                    <div class="msg-info-time">${chatCreatedTime}</div>
+                                </div>
+                                <div class="msg-text" style="font-size: 15px;">
+                                    ${lastMsg}
+                                </div>
+                            </div>
+                        `;
+
+                        chat_body.appendChild(ChatMessageBox);
+
+                        // Clear the text input field after sending the message
+                        document.getElementById('id_body').value = '';
+                        setTimeout(scrollToBottom, 100);
+                    }
+                }
+
+                counter = result.length;
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        const data = { num: counter };
+
+        let url = "{% url 'rec_msg' friend.id %}";
+
+        postJSON(data);
+    }
+
+    // Call receiveMessage initially and then at intervals
+    receiveMessage();
+    const parentElement = document.getElementById('chats');
+    const lastChild = parentElement.lastChild;
+    lastChild.id = 'last-child';
+    setInterval(receiveMessage, 1000);
+</script>
+
+
+</html>

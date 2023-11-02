@@ -1,0 +1,544 @@
+{% load static %}
+{% load custom_filter %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> chatRoom - follow and chat </title>
+    <link rel="stylesheet" href="{% static 'css/interface.css' %}">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{% url 'index' %}">
+                <h3 class="log" style="background: linear-gradient(135deg, #71b7e6, #9b59b6); padding: 8px; border-radius: 21px; color: white;">
+                         chat<b>Room😄</b>
+                </h3>
+            </a>
+            
+            <div class="create">
+                <!-- <div class="profile-picture">
+                    <img src="{% static '/Images/photo5.jpg' %}" alt="">
+                     
+                </div> -->
+                <div class="actions">
+
+                <div class="profile profile-picture" onclick="menuToggle();">
+                    <img src="{{user_profile.profile_picture.url}}" />
+                  </div>
+                  <div class="menu">
+                    <h3>{{request.user.first_name}} {{request.user.last_name}}<br /><span>@{{request.user.username}}</span></h3>
+                    <ul>
+                      <li>
+                        <img src="{%static 'Images/assets/user.png' %}" /><a href="{% url 'update' %}">My profile</a>
+                      </li>
+                      <li>
+                        <img src="{%static 'Images/assets/edit.png' %}" /><a href="{% url 'update' %}">Edit profile</a>
+                      </li>
+                      <!-- <li>
+                        <img src="./assets/icons/envelope.png" /><a href="#">Inbox</a>
+                      </li>
+                      <li>
+                        <img src="./assets/icons/settings.png" /><a href="#">Setting</a>
+                      </li>
+                      <li><img src="./assets/icons/question.png" /><a href="#">Help</a></li> -->
+                      <li>
+                        <img src="{%static 'Images/assets/logout.png' %}" /><a href="{% url 'logout' %}">Logout</a>
+                      </li>
+                    </ul>
+                </div>
+
+                    <style>
+                        .actions {
+                            position: fixed;
+                            right: 30px;
+                        }
+                        
+                        .actions .profile {
+                            position: relative;
+                            width: 45px;
+                            height: 45px;
+                            border-radius: 50%;
+                            overflow: hidden;
+                            cursor: pointer;
+                        }
+                        
+                        .actions .profile img {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                        
+                        .actions .menu {
+                            position: absolute;
+                            top: 120px;
+                            right: -10px;
+                            padding: 10px 20px;
+                            background: var(--color-white);
+                            width: 200px;
+                            box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
+                            border-radius: 15px;
+                            box-shadow: 0 0 1rem var(--color-gray);
+                            transition: 0.5s;
+                            visibility: hidden;
+                            opacity: 0;
+                        }
+                        
+                        .actions .menu.active {
+                            top: 80px;
+                            visibility: visible;
+                            opacity: 1;
+                        }
+                        
+                        .actions .menu::before {
+                            content: "";
+                            position: absolute;
+                            top: -5px;
+                            right: 28px;
+                            width: 20px;
+                            height: 20px;
+                            background: var(--color-white);
+                            transform: rotate(45deg);
+                        }
+                        
+                        .actions .menu h3 {
+                            width: 100%;
+                            text-align: center;
+                            font-size: 18px;
+                            padding: 20px 0;
+                            font-weight: 500;
+                            color: var(--color-dark);
+                            line-height: 1.5em;
+                        }
+                        
+                        .actions .menu h3 span {
+                            font-size: 14px;
+                            color: #cecece;
+                            font-weight: 300;
+                        }
+                        
+                        .actions .menu ul li {
+                            list-style: none;
+                            padding: 16px 0;
+                            border-top: 1px solid rgba(0, 0, 0, 0.05);
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        .actions .menu ul li img {
+                            color: #cecece;
+                            max-width: 20px;
+                            margin-right: 10px;
+                            opacity: 0.5;
+                            transition: 0.5s;
+                        }
+                        
+                        .actions .menu ul li:hover img {
+                            opacity: 1;
+                        }
+                        
+                        .actions .menu ul li a {
+                            display: inline-block;
+                            text-decoration: none;
+                            color: var(--color-dark);
+                            font-weight: 500;
+                            transition: 0.5s;
+                        }
+                        
+                        .actions .menu ul li:hover a {
+                            color: #ff5d94;
+                        }
+                    </style>
+                </div>
+            </div>  
+        </div>
+    </nav>
+
+    {% block content %}
+
+
+    <!-- =================================MAIN================================ -->
+
+
+    <main>
+
+        <div class="container">
+
+
+        <!-- =================================LEFT================================ -->
+
+
+            <div class="left">
+                <a href="" class="profile">
+                    <div class="profile-picture">
+                        <img src="{{user_profile.profile_picture.url}}" alt="">
+                    </div>
+                    <div class="handle">
+                        <h4>{{user_profile.first_name}} {{user_profile.last_name}}</h4>
+                        <p class="text-muted">
+                            @{{user_profile.username}}
+                        </p>
+                    </div>
+                </a>
+                
+
+                <!-- =================================SIDE BAR================================ -->
+
+                <div class="sidebar">
+
+                    <a href="" class="menu-item">
+                        <span><i class="uil uil-estate"></i></span><h3>Home</h3>
+                    </a>
+<!-- 
+                    <a class="menu-item">
+                        <span><i class="uil uil-compass"></i></span><h3>Explore</h3>
+                    </a> -->
+
+                    {% if not_count == 0 %}
+
+                    <a class="menu-item" id="notifications">
+                        <span><i class="uil uil-bell"></i></span><h3>Notifications</h3>
+
+
+                        <div class="notifications-popup" style="max-width: 200px; overflow-y:scroll; left: -13rem">
+                            <div>
+                                <center><div class="notification-body">
+                                    <h4 style="color: var(--color-gray);">No new notifications</h4>
+                                </div></center>
+                            </div>
+                        </div>
+                    </a>
+
+                    {% else %}
+
+                    <a class="menu-item" id="notifications">
+                        <span><i class="uil uil-bell"><small class="notification-count">{{not_count}}</small></i></span><h3>Notifications</h3>
+
+
+                        <div class="notifications-popup" style="max-width: 380px; max-height: 380px; overflow-y:scroll">
+
+                            {% for notification in notifications %}
+
+                            <div>
+                                <div class="profile-picture">
+                                    <img src="{{ notification.sender.profile.profile_picture.url }}" alt="">
+                                </div>
+                                <div class="notification-body">
+                                    <b> {{notification.sender.username}} </b> has sent you a friend request
+                                    <small class="text-muted">{{notification.created}}</small>
+                                </div>
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+                    </a>
+
+                    {% endif %}
+
+                    <!-- <a class="menu-item" id="messages-notification">
+                        <span><i class="uil uil-envelopes"><small class="notification-count">6</small></i></span><h3>Messages</h3>
+                    </a> -->
+
+                    <a href="{% url 'f-suggest' %}" class="menu-item">
+                        <span><i class="uil uil-bookmark"></i></span><h3>Suggestions</h3>
+                    </a>
+
+                    {% if req_count == 0 %}
+
+                    <a href="{% url 'f-request' %}" class="menu-item">
+                        <span><i class="uil uil-chart-line"></i></span><h3>Requests</h3>
+                    </a>
+
+                    {% else %}
+
+                    <a href="{% url 'f-request' %}" class="menu-item">
+                        <span><i class="uil uil-chart-line"><small class="notification-count">{{req_count}}</small></i></span><h3>Requests</h3>
+                    </a>
+
+                    {% endif %}
+
+                    <!-- <a class="menu-item" id="theme">
+                        <span><i class="uil uil-palette"></i></span><h3>Theme</h3>
+                    </a> -->
+
+                    <!-- <a href="" class="menu-item">
+                        <span><i class="uil uil-setting"></i></span><h3>Settings</h3>
+                    </a> -->
+
+                </div>
+
+                <!-- =================================END OF SIDEBAR================================ -->
+
+                <!-- <label for="create-post" class="btn btn-primary">Create Post</label> -->
+            </div>
+
+            <!-- =================================MIDDLE================================ -->
+
+
+            <div class="middle">
+
+              
+            <div class="right">
+
+
+
+                <div class="messages">
+                    <div class="heading">
+                        <h4>Messages</h4><i class="uil uil-envelopes"></i>
+                    </div>
+
+            <!-- =================================SEARCH BAR================================ -->
+
+
+                    <div class="search-bar">
+                        <i class="uil uil-search"></i>
+                        <input type="search" placeholder="Search messages" id="message-search">
+                    </div>
+
+            <!-- =================================MESSAGES CATEGORY================================ -->
+
+                    <div class="category">
+                        <h6 class="active">Primary</h6>
+                        <!-- <h6>General</h6> -->
+                        <a href="{% url 'f-request' %}"><h6 class="message-requests">Requests</h6></a>
+                    </div>
+
+            <!-- =================================MESSAGES================================ -->
+                   <div style="overflow-y: scroll; height: 300px">
+                        {% if c_friends == 0 %}
+                        <center><h3 style="color: grey;">You have no friends to chat</h3></center>
+                        <center><small> you can sent requests for friends, <a href="{% url 'f-suggest' %}" style="color: #ff5d94;">go to user Suggestions</a></small></center>
+                        {% else %}
+                        {% for friend in friends %}
+                            {% if friend.profile.id %}
+                                <a style="height: 80px;" href="{% url 'detail' friend.profile.id %}">
+                                    <div class="message">
+                                        <div class="profile-picture">
+                                            <!-- <img src="/media/default-profile.jpg" alt=""> -->
+                                            <img src="{{ friend.profile.profile_picture.url }}" alt="">
+                                        </div>
+                                        <div class="message-body">
+                                            <h5>{{friend.first_name}} {{friend.last_name}}</h5>
+                                            <p class="text-muted">{{friend.username}}</p>
+                                        </div>
+                                        <div class="notification"><span class="badge" id="msg_badge">0</span></div>
+                                        <style>
+                                        .notification{
+                                            float: right;
+                                            padding: 8px;
+                                        }
+                                        .badge {
+                                            background: var(--color-danger);
+                                            color: var(--color-white);
+                                            font-size: 0.7rem;
+                                            width: fit-content;
+                                            border-radius: 0.8rem;
+                                            padding: 0.1rem 0.4rem;
+                                            position: absolute;
+                                            
+                                        }
+                                        </style>
+                                    </div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                </div>
+                    
+            </div>
+
+                <div class="friend-requests">
+                    <h4>Suggestions</h4>
+                    <div style="overflow-y: scroll; height: 50vw">
+
+                        {% for friend in s_friends %}
+
+                        <div class="request">
+                            <div class="info">
+                                <div class="profile-picture">
+                                    <img src="{{friend.profile.profile_picture.url}}" alt="">
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <h5>{{friend.first_name}} {{friend.last_name}}</h5>
+                                    <p class="text-muted">
+                                        <small>{{friend.username}}</small>
+                                    </p>
+                                </div>
+                            </div>
+
+                            {% if friend.id|if_id_in_queryset:f_requests %}
+
+                            <div class="action">
+                                <button class="btn btn-primary acc-btn disable" data-id = {{friend.id}}>
+                                    Requested
+                                </button>
+                                <!-- <button class="btn dec-btn" data-id = {{friend.id}} style="font-size: 13px;">
+                                    Cancel request
+                                </button> -->
+                            </div>
+
+                            {% else %}
+
+                            <div class="action">
+                                <button class="btn btn-primary acc-btn" data-id = {{friend.id}}>
+                                    Sent Request
+                                </button>
+                                <!-- <button class="btn dec-btn" data-id = {{friend.id}}>
+                                    Remove
+                                </button> -->
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endfor %}
+
+                </div>
+                </div>
+
+                    <style>
+                        .disable{
+                            pointer-events: none;
+                            opacity: 0.7;
+                            font-size: 14px;
+                        }
+                    </style>
+
+
+
+            </div>
+            
+
+            <!-- ==========================END OF RIGHT============================= -->
+
+        </div>
+
+    </main>
+
+            <!-- ==========================THEME CuSTOMIZATION============================= -->
+
+<script>
+    //selectors
+
+    let add_btns = document.querySelectorAll('.acc-btn');
+    let cancel_btns = document.querySelectorAll('.dec-btn');
+
+    //looping through the acc-btn buttons
+    for(let btn of add_btns){
+        btn.addEventListener("click", sent_friend_request);
+    }
+
+
+    async function postJSON(data, btn) {
+        let url = "{% url 'sent-request' %}"
+        try {
+          const response = await fetch(url, {
+            method: "POST", // or 'PUT'
+            headers: {
+              "Content-Type": "application/json",
+              'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data),
+          });
+      
+          const result = await response.json();
+          console.log("Success:", result);
+          btn.innerText = "Requested"
+          btn.classList.add('disable')
+          btn.nextElementSibling.style.fontSize = '13px'
+          //btn.nextElementSibling.innerText = 'cancel request'
+
+
+          
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      
+     
+    function sent_friend_request(e){
+        console.log(e.target)
+        const btn = e.target
+        const data = e.target.dataset.id;
+        postJSON(data, btn);
+    }
+
+
+
+    setInterval(getNotification, 1000);
+
+      function getNotification() {
+          let url = "{% url 'msg_not' %}";
+  
+          fetch(url)
+              .then(res => res.json())
+              .then(data => {
+                  console.log(data);
+                  let chatNotificationBtns = document.getElementsByClassName("badge");
+                  for (let i = 0; i < chatNotificationBtns.length; i++) {
+                      let count = data[i];
+                      chatNotificationBtns[i].innerText = count;
+                      if (count === 0) {
+                          chatNotificationBtns[i].style.display = "none"; // Hide the badge when count is 0
+                      } else {
+                          chatNotificationBtns[i].style.display = "block"; // Show the badge for counts greater than 0
+                      }
+                  }
+              })
+              .catch(error => console.log(error));
+      }
+
+
+
+  </script>
+
+
+{% endblock %}
+
+<!-- <style>
+
+    THIS IS THE STYLE FOR THE SCROLL BAR, ENABLE IT IF NEEDED
+    
+/* For Webkit-based browsers */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track color */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888; /* Thumb color */
+    border-radius: 5px; /* Rounded corners on the thumb */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Thumb color on hover */
+  }
+</style> -->
+
+
+<script src="{% static 'js/interface.js' %}"></script>
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    function menuToggle() {
+      const toggleMenu = document.querySelector(".menu");
+      toggleMenu.classList.toggle("active");
+    }
+
+
+</script>
+
+</body>
+</html>

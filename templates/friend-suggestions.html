@@ -1,0 +1,140 @@
+{% extends 'interface.html' %}
+
+{% load custom_filter %}
+
+{% load static %}
+
+{% block content %}
+<main>
+    <div class="container" style="grid-template-columns: 0 auto 0; max-width: 700px">
+
+    <!-- =================================LEFT================================ -->
+
+    <div class="left"></div>
+
+        <!-- =================================MIDDLE================================ -->
+
+
+        <div class="middle">
+
+            <div class="right friend-requests" >
+                <h4>Suggestions</h4>
+                <br>
+                <div style="overflow-y: scroll; height: max-content;">
+                    {% for friend in s_friends %}
+
+                        <div class="request">
+                            <div class="info">
+                                <div class="profile-picture">
+                                    <img src="{{friend.profile.profile_picture.url}}" alt="">
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <h5>{{friend.first_name}} {{friend.last_name}}</h5>
+                                    <p class="text-muted">
+                                        <small>{{friend.username}}</small>
+                                    </p>
+                                </div>
+                            </div>
+
+                            {% if friend.id|if_id_in_queryset:f_requests %}
+
+                            <div class="action">
+                                <button class="btn btn-primary acc-btn disable" data-id = {{friend.id}}>
+                                    Requested
+                                </button>
+                                <!-- <button class="btn dec-btn" data-id = {{friend.id}} style="font-size: 13px;">
+                                    Cancel request
+                                </button> -->
+                            </div>
+
+                            {% else %}
+
+                            <div class="action">
+                                <button class="btn btn-primary acc-btn" data-id = {{friend.id}}>
+                                    Sent Request
+                                </button>
+                                <!-- <button class="btn dec-btn" data-id = {{friend.id}}>
+                                    Remove
+                                </button> -->
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endfor %}
+
+        
+        </div>
+        <style>
+            .disable{
+                pointer-events: none;
+                opacity: 0.7;
+                font-size: 14px;
+            }
+        </style>
+
+
+        <!-- =================================RIGHT================================ -->
+
+
+        <div class="right">
+                
+
+
+        </div>
+
+        <!-- ==========================END OF RIGHT============================= -->
+
+    </div>
+</main>
+<script>
+    //selectors
+
+    let add_btns = document.querySelectorAll('.acc-btn');
+    let cancel_btns = document.querySelectorAll('.dec-btn');
+
+    //looping through the acc-btn buttons
+    for(let btn of add_btns){
+        btn.addEventListener("click", sent_friend_request);
+    }
+
+
+    async function postJSON(data, btn) {
+        let url = "{% url 'sent-request' %}"
+        try {
+          const response = await fetch(url, {
+            method: "POST", // or 'PUT'
+            headers: {
+              "Content-Type": "application/json",
+              'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data),
+          });
+      
+          const result = await response.json();
+          console.log("Success:", result);
+          btn.innerText = "Requested"
+          btn.classList.add('disable')
+          //btn.nextElementSibling.style.fontSize = '13px'
+          //btn.nextElementSibling.innerText = 'cancel request'
+
+
+          
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      
+     
+    function sent_friend_request(e){
+        console.log(e.target)
+        const btn = e.target
+        const data = e.target.dataset.id;
+        postJSON(data, btn);
+    }
+
+
+
+  </script>
+{% endblock %}

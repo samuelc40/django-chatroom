@@ -1,0 +1,63 @@
+{% extends 'interface.html' %}
+{% load static %}
+{% block content %}
+
+
+  <head>
+    <meta charset="UTF-8">
+    <title>User updates - chatRoom</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+
+<body style="height:100vh;">
+  <div class="container">
+    <div class="title">Update User Details</div>
+    <br>
+    <div class="content">
+      <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="user-details">
+
+          <div class="input-box" style="width:100%; display:grid; grid-row-start: 2;">
+
+            {% for field in form %}
+
+                {% if field.errors %}
+                  {{ field }}
+                  <center><small style="color: red;">{{ field.errors }}</small></center>
+                  <br>
+                {% else %}
+                  {{ field }}
+                  <br>
+                {% endif %}
+        
+            {% endfor %}
+        
+        </div>
+
+
+        </div>
+
+
+        <div class="button">
+          <input type="submit" value="Update">
+        </div>
+        <!-- <div class="signup-link">
+          Already have an account? <a href="{% url 'login' %}">Login</a>
+       </div> -->
+       <style>
+        form .signup-link {
+          color: #262626;
+          margin-top: 20px;
+          text-align: center;
+        }
+       </style>
+      </form>
+    </div>
+  </div>
+
+</body>
+{% endblock %}
