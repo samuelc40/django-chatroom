@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'followchatproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'postgresql://postgres:HdXxTXlJWomjFyRfEJKdEMvCVurisUBQ@autorack.proxy.rlwy.net:14253/railway',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': '-eA3b-Cae2dbG3bA3*dg-a5G*1C1ef*B',
-        'HOST': 'monorail.proxy.rlwy.net',
-        'PORT': '58939',
+        'PASSWORD': 'HdXxTXlJWomjFyRfEJKdEMvCVurisUBQ',
+        'HOST': 'postgres.railway.internal',
+        'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'prefer',  # Try 'disable' to rule out SSL issues
         }
