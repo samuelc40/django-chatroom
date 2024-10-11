@@ -84,9 +84,10 @@ DATABASES = {
         'PASSWORD': 'HdXxTXlJWomjFyRfEJKdEMvCVurisUBQ',
         'HOST': 'postgres.railway.internal',
         'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'prefer',  # Try 'disable' to rule out SSL issues
-        }
+        # 'ssl':820,
+        # 'OPTIONS': {
+        #     'sslmode': 'prefer',  # Try 'disable' to rule out SSL issues
+        # }
     }
 }
 
