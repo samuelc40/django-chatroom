@@ -84,7 +84,9 @@ DATABASES = {
         'PASSWORD': '-eA3b-Cae2dbG3bA3*dg-a5G*1C1ef*B',
         'HOST': 'monorail.proxy.rlwy.net',
         'PORT': '58939',
-        'SSL': '820',
+        'OPTIONS': {
+            'sslmode': 'prefer',  # Try 'disable' to rule out SSL issues
+        }
     }
 }
 
